@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Environment files (will be copied separately)
+.env
+
+# Logs
+*.log
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+main
+*.exe
+
+# Test files
+*_test.go
+
+# Uploads (will be mounted as volume)
+uploads/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Scripts
+scripts/
