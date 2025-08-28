@@ -1,6 +1,7 @@
 package models
 
 import (
+	"mime/multipart"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,18 +15,28 @@ type User struct {
 	FirstName string             `json:"first_name" bson:"first_name" validate:"required,min=2,max=50"`
 	LastName  string             `json:"last_name" bson:"last_name" validate:"required,min=2,max=50"`
 	Role      string             `json:"role" bson:"role" validate:"required,oneof=admin user"`
+	Avatar    string             `json:"avatar,omitempty" bson:"avatar,omitempty"`
 	IsActive  bool               `json:"is_active" bson:"is_active"`
 	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt time.Time          `json:"updated_at" bson:"updated_at"`
 }
 
+//	type CreateUserRequest struct {
+//		Username  string `json:"username" validate:"required,min=3,max=20" example:"johndoe"`
+//		Email     string `json:"email" validate:"required,email" example:"johndoe@example.com"`
+//		Password  string `json:"password" validate:"required,min=6" example:"password123"`
+//		FirstName string `json:"first_name" validate:"required,min=1,max=50" example:"John"`
+//		LastName  string `json:"last_name" validate:"required,min=1,max=50" example:"Doe"`
+//		Role      string `json:"role" validate:"required,oneof=admin user" enums:"admin,user" example:"user"`
+//	}
 type CreateUserRequest struct {
-	Username  string `json:"username" validate:"required,min=3,max=20" example:"johndoe"`
-	Email     string `json:"email" validate:"required,email" example:"johndoe@example.com"`
-	Password  string `json:"password" validate:"required,min=6" example:"password123"`
-	FirstName string `json:"first_name" validate:"required,min=1,max=50" example:"John"`
-	LastName  string `json:"last_name" validate:"required,min=1,max=50" example:"Doe"`
-	Role      string `json:"role" validate:"required,oneof=admin user" enums:"admin,user" example:"user"`
+	Username  string                `form:"username" binding:"required,min=3,max=20"`
+	Email     string                `form:"email" binding:"required,email"`
+	Password  string                `form:"password" binding:"required"`
+	FirstName string                `form:"first_name" binding:"required"`
+	LastName  string                `form:"last_name" binding:"required"`
+	Role      string                `form:"role" binding:"required"`
+	Avatar    *multipart.FileHeader `form:"avatar"` //optional
 }
 
 type UpdateUserRequest struct {
@@ -34,6 +45,7 @@ type UpdateUserRequest struct {
 	FirstName string `json:"first_name" validate:"omitempty,min=1,max=50" example:"John"`
 	LastName  string `json:"last_name" validate:"omitempty,min=1,max=50" example:"Doe"`
 	Role      string `json:"role" validate:"omitempty,oneof=admin user" enums:"admin,user" example:"user"`
+	Avatar    string `json:"avatar,omitempty" example:"https://example.com/profile.jpg"`
 	IsActive  *bool  `json:"is_active" example:"true"`
 }
 
@@ -49,6 +61,7 @@ type UserResponse struct {
 	FirstName string             `json:"first_name" example:"John"`
 	LastName  string             `json:"last_name" example:"Doe"`
 	Role      string             `json:"role" example:"user"`
+	Avatar    string             `json:"avatar,omitempty" example:"https://example.com/profile.jpg"`
 	IsActive  bool               `json:"is_active" example:"true"`
 	CreatedAt time.Time          `json:"created_at" example:"2023-01-01T12:00:00Z"`
 	UpdatedAt time.Time          `json:"updated_at" example:"2023-01-01T12:00:00Z"`
@@ -71,6 +84,7 @@ func (u *User) ToResponse() *UserResponse {
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Role:      u.Role,
+		Avatar:    u.Avatar,
 		IsActive:  u.IsActive,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,

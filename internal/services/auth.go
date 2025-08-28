@@ -55,7 +55,7 @@ func (s *AuthService) Login(ctx context.Context, req *models.LoginRequest) (*mod
 	}, nil
 }
 
-func (s *AuthService) Register(ctx context.Context, req *models.CreateUserRequest) (*models.AuthResponse, error) {
+func (s *AuthService) Register(ctx context.Context, req *models.CreateUserRequest, imagePath string) (*models.AuthResponse, error) {
 	// Check if user already exists
 	if _, err := s.userRepo.GetByEmail(ctx, req.Email); err == nil {
 		return nil, errors.ErrUserExists
@@ -79,6 +79,7 @@ func (s *AuthService) Register(ctx context.Context, req *models.CreateUserReques
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Role:      req.Role,
+		Avatar:    imagePath,
 		IsActive:  true,
 	}
 

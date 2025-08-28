@@ -90,6 +90,9 @@ func (s *UserService) Update(ctx context.Context, id primitive.ObjectID, req *mo
 	if req.Role != "" {
 		user.Role = req.Role
 	}
+	if req.Avatar != "" {
+		user.Avatar = req.Avatar
+	}
 	if req.IsActive != nil {
 		user.IsActive = *req.IsActive
 	}

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	// "path/filepath"
 	"user-management-api/internal/models"
 	"user-management-api/internal/services"
 	"user-management-api/pkg/errors"
@@ -32,9 +33,11 @@ func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 // @Failure      409   {object}  models.APIResponse "User already exists"
 // @Failure      500   {object}  models.APIResponse "Internal server error"
 // @Router       /auth/register [post]
+
+// ShouldBindJSON changed to ShouldBind because of multipart/form-data
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req models.CreateUserRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, models.APIResponse{
 			Success: false,
 			Message: "Invalid request data",
@@ -42,6 +45,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		})
 		return
 	}
+
 	if err := utils.ValidateStruct(&req); err != nil {
 		c.JSON(http.StatusBadRequest, models.APIResponse{
 			Success: false,
@@ -50,7 +54,17 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		})
 		return
 	}
-	authResponse, err := h.authService.Register(c.Request.Context(), &req)
+
+    // Get uploaded file paths from context (set by SingleImageUpload middleware)
+    uploadedFiles, exists := c.Get("uploadedFiles")
+    var imgPathStr string
+    if exists {
+        if files, ok := uploadedFiles.([]string); ok && len(files) > 0 {
+            imgPathStr = files[0] // use the first uploaded file as avatar path
+        }
+    }
+
+	authResponse, err := h.authService.Register(c.Request.Context(), &req, imgPathStr)
 	if err != nil {
 		if appError, ok := err.(*errors.AppError); ok {
 			c.JSON(appError.Code, models.APIResponse{
@@ -66,6 +80,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusCreated, models.APIResponse{
 		Success: true,
 		Message: "User created successfully",
