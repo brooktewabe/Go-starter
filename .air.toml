@@ -1,12 +1,13 @@
 # Air configuration for hot reload
-root = "."
-testdata_dir = "testdata"
-tmp_dir = "tmp"
+
+  root = "."
+  tmp_dir = "tmp"
 
 [build]
-  args_bin = []
-  bin = "./tmp/main"
-  cmd = "go build -o ./tmp/main ./cmd/server"
+  # Output executable
+  bin = "./tmp/main.exe"
+  # Build command
+  cmd = "go build -o \"./tmp/main.exe\" ./cmd/server/main.go"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "docs", "uploads"]
   exclude_file = []

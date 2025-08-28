@@ -106,8 +106,11 @@ The server will start, and by default, it should be listening on `http://localho
 # Setup development environment (installs tools, creates directories)
 make setup
 
+# Run
+go run ./cmd/server/main.go
+
 # Run with hot reload
-make dev
+make dev or air
 
 # Run linting
 make lint
