@@ -15,7 +15,7 @@ import (
 	"user-management-api/internal/services"
 	"user-management-api/pkg/database"
 
-	_ "user-management-api/docs" // This line is needed for swag to find your docs
+	_ "user-management-api/docs" // This line is needed for swagger
 
 )
 
@@ -51,9 +51,10 @@ func main() {
 	healthHandler := handlers.NewHealthHandler()
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userService)
+	fileHandler := handlers.NewFileHandler()
 
 	// setup router
-	router := routes.SetupRoutes(cfg, healthHandler, authHandler, userHandler)
+	router := routes.SetupRoutes(cfg, healthHandler, authHandler, userHandler, fileHandler)
 
 	// start server
 	srv := &http.Server{
