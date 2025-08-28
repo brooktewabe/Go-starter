@@ -11,8 +11,8 @@ import (
 )
 
 // SetupRoutes configures all the application routes
-func SetupRoutes(cfg *config.Config, healthHandler *handlers.HealthHandler, authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler) *gin.Engine {
-	if cfg.Server.Env == "Production" {
+func SetupRoutes(cfg *config.Config, healthHandler *handlers.HealthHandler, authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler, fileHandler *handlers.FileHandler) *gin.Engine {
+	if cfg.Server.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	
@@ -30,44 +30,22 @@ func SetupRoutes(cfg *config.Config, healthHandler *handlers.HealthHandler, auth
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Setup API routes
-	setupAPIRoutes(router, cfg, authHandler, userHandler)
+	setupAPIRoutes(router, cfg, authHandler, userHandler, fileHandler)
 
 	return router
 }
 
 // setupAPIRoutes configures the API v1 routes
-func setupAPIRoutes(router *gin.Engine, cfg *config.Config, authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler) {
+func setupAPIRoutes(router *gin.Engine, cfg *config.Config, authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler, fileHandler *handlers.FileHandler) {
 	v1 := router.Group("/api/v1")
 	{
 		// Authentication routes
-		setupAuthRoutes(v1, authHandler)
+		SetupAuthRoutes(v1, authHandler)
 		
 		// User routes
-		setupUserRoutes(v1, cfg, userHandler)
-	}
-}
-
-// setupAuthRoutes configures authentication related routes
-func setupAuthRoutes(rg *gin.RouterGroup, authHandler *handlers.AuthHandler) {
-	auth := rg.Group("/auth")
-	{
-		auth.POST("/register", authHandler.Register)
-		auth.POST("/login", authHandler.Login)
-	}
-}
-
-// setupUserRoutes configures user management routes
-func setupUserRoutes(rg *gin.RouterGroup, cfg *config.Config, userHandler *handlers.UserHandler) {
-	users := rg.Group("/users")
-	{
-		// Public user routes (require authentication)
-		users.GET("/profile", middleware.AuthMidddleware(cfg), userHandler.GetProfile)
+		SetupUserRoutes(v1, cfg, userHandler)
 		
-		// Admin-only user routes (require authentication + admin role)
-		users.GET("", middleware.AuthMidddleware(cfg), middleware.RequireRole("admin"), userHandler.ListUsers)
-		users.POST("", middleware.AuthMidddleware(cfg), middleware.RequireRole("admin"), userHandler.CreateUser)
-		users.GET("/:id", middleware.AuthMidddleware(cfg), middleware.RequireRole("admin"), userHandler.GetUser)
-		users.PUT("/:id", middleware.AuthMidddleware(cfg), middleware.RequireRole("admin"), userHandler.UpdateUser)
-		users.DELETE("/:id", middleware.AuthMidddleware(cfg), middleware.RequireRole("admin"), userHandler.DeleteUser)
+		// File routes
+		SetupFileRoutes(v1, cfg, fileHandler)
 	}
 }
