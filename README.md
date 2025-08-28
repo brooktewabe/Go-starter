@@ -100,3 +100,45 @@ go run ./cmd/api/main.go
 ```
 
 The server will start, and by default, it should be listening on `http://localhost:8080`.
+### Development Commands
+
+```sh
+# Setup development environment (installs tools, creates directories)
+make setup
+
+# Run with hot reload
+make dev
+
+# Run linting
+make lint
+
+# Run all checks (format, vet, lint, test)
+make check
+
+# Build and run with Docker
+make docker-up
+
+# View Docker logs
+make docker-logs
+
+# Stop Docker services
+make docker-down
+```
+
+### Docker Development
+
+```sh
+# Start all services (API + MongoDB + Mongo Express)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f api
+
+# Stop services
+docker-compose down
+```
+
+Access points:
+- **API**: http://localhost:8080
+- **Swagger Docs**: http://localhost:8080/swagger/index.html
+- **Mongo Express**: http://localhost:8081 (admin/admin123)
