@@ -33,7 +33,7 @@ func LoadConfig() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
 	}
 
-	expiresIn, _ := time.ParseDuration(getEnv("JWT_EXPIRES_IN", "24h"))
+	expiresIn, _ := time.ParseDuration(getEnv("JWT_EXPIRES_IN", "4h"))
 	return &Config{
 		Server: ServerConfig{
 			Port: getEnv("PORT", "8080"),
@@ -41,7 +41,7 @@ func LoadConfig() (*Config, error) {
 		},
 		Database: DatabaseConfig{
 			URI:     getEnv("MONGODB_URI", "mongodb://localhost:27017"),
-			Name:    getEnv("DATABASE_NAME", "user_management_api"),
+			Name:    getEnv("DATABASE_NAME", "go_starter_db"),
 			Timeout: 10 * time.Second,
 		},
 		JWT: JWTConfig{
