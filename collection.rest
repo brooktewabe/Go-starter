@@ -1,17 +1,14 @@
 # GET http://localhost:8080/health
 # Content-Type: application/json
 
-# POST http://localhost:8080/api/v1/auth/register
-# Content-Type: application/json
-
-# {
-#     "username": "testuser4",
-#     "email": "testuser4@example.com",
-#     "first_name":"Yonas",
-#     "last_name":"Mekonnen",
-#     "role": "admin",
-#     "password": "securepassword123"
-# }
+# curl --location 'http://localhost:8080/api/v1/auth/register' \
+# --form 'username="john"' \
+# --form 'email="john@example.com"' \
+# --form 'password="password123"' \
+# --form 'first_name="John"' \
+# --form 'last_name="Doe"' \
+# --form 'role="user"' \
+# --form 'image=@"/C:/Users/brook/Downloads/pexels-eberhard-grossgasteiger-454880.jpg"'
 
 # GET http://localhost:8080/api/v1/users
 # Content-Type: application/json
