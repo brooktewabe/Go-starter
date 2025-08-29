@@ -26,6 +26,8 @@ func SetupRoutes(cfg *config.Config, healthHandler *handlers.HealthHandler, auth
 	// Health check endpoint
 	router.GET("/health", healthHandler.HealthCheck)
 
+	router.Static("/api/v1/uploads", "./uploads")
+
 	// Swagger documentation endpoint
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

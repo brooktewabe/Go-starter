@@ -73,12 +73,10 @@ func DocumentUploadConfig() FileUploadConfig {
 	}
 }
 
-// FileUploadMiddleware creates a file upload validation middleware
 func FileUploadMiddleware(config FileUploadConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Parse multipart form
-		err := c.Request.ParseMultipartForm(config.MaxFileSize)
-		if err != nil {
+		if err := c.Request.ParseMultipartForm(config.MaxFileSize); err != nil {
 			c.JSON(http.StatusBadRequest, models.APIResponse{
 				Success: false,
 				Message: "Failed to parse multipart form",
@@ -124,7 +122,7 @@ func FileUploadMiddleware(config FileUploadConfig) gin.HandlerFunc {
 			return
 		}
 
-		// Validate each file
+		// Validate files
 		for _, fileHeader := range files {
 			if err := validateFile(fileHeader, config); err != nil {
 				c.JSON(http.StatusBadRequest, models.APIResponse{
@@ -137,8 +135,7 @@ func FileUploadMiddleware(config FileUploadConfig) gin.HandlerFunc {
 			}
 		}
 
-		// Store validated files in context for handler use
-		// Save files and store paths in context
+		// Save files and store normalized paths in context
 		var savedPaths []string
 		for _, fileHeader := range files {
 			// Create upload directory if it doesn't exist
@@ -154,10 +151,10 @@ func FileUploadMiddleware(config FileUploadConfig) gin.HandlerFunc {
 
 			// Generate unique filename
 			filename := generateUniqueFilename(fileHeader.Filename)
-			filepath := filepath.Join(config.UploadPath, filename)
+			path := filepath.Join(config.UploadPath, filename)
 
 			// Save file
-			if err := c.SaveUploadedFile(fileHeader, filepath); err != nil {
+			if err := c.SaveUploadedFile(fileHeader, path); err != nil {
 				c.JSON(http.StatusInternalServerError, models.APIResponse{
 					Success: false,
 					Message: "Failed to save file",
@@ -167,7 +164,8 @@ func FileUploadMiddleware(config FileUploadConfig) gin.HandlerFunc {
 				return
 			}
 
-			savedPaths = append(savedPaths, filepath)
+			// Convert path to forward slashes for URL compatibility
+			savedPaths = append(savedPaths, filepath.ToSlash(path))
 		}
 		c.Set("uploadedFiles", savedPaths)
 		c.Set("uploadConfig", config)
