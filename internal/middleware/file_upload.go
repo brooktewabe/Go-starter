@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"slices"
 )
 
 // generateUniqueFilename generates a unique filename to prevent conflicts
@@ -211,12 +212,13 @@ func validateFile(fileHeader *multipart.FileHeader, config FileUploadConfig) err
 
 // contains checks if a slice contains a string
 func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
+	// for _, s := range slice {
+	// 	if s == item {
+	// 		return true
+	// 	}
+	// }
+	// return false
+	return slices.Contains(slice, item)
 }
 
 // SingleImageUpload - Middleware for single image upload
